@@ -59,14 +59,26 @@ public class SpringController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST, params = "saveStatistic")
     public void saveStatistic(HttpServletResponse response) throws IOException {
-        logger.info("Запрос на скачивание статистки");
-        downloadFile(response, operationModel.getStatistic(), getName(operationModel.getUrl())+"-statistic.txt");
+        if (operationModel.getUrl() != null) {
+            logger.info("Запрос на скачивание статистки");
+            downloadFile(response, operationModel.getStatistic(), getName(operationModel.getUrl()) + "-statistic.txt");
+        }
+        else {
+            logger.log(Level.WARNING, "Данные о содержимом скачиваемого фала отсутствуют");
+            response.sendRedirect("");
+        }
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, params = "save")
     public void save(HttpServletResponse response) throws IOException {
-        logger.info("Запрос на скачивание HTML страницы");
-        downloadFile(response, operationModel.getFileHtml(), getName(operationModel.getUrl())+".html");
+        if (operationModel.getUrl() != null) {
+            logger.info("Запрос на скачивание HTML страницы");
+            downloadFile(response, operationModel.getFileHtml(), getName(operationModel.getUrl()) + ".html");
+        }
+        else {
+            logger.log(Level.WARNING, "Данные о содержимом скачиваемого фала отсутствуют");
+            response.sendRedirect("");
+        }
     }
 
     private void downloadFile(HttpServletResponse response, String fileStr, String fileName) throws IOException {
@@ -87,7 +99,7 @@ public class SpringController {
 
     private String getName(String url){
         String[] domain = url.split("/");
-        return domain[2];
+        return (domain.length > 2) ? domain[2] : "";
     }
 
 }
